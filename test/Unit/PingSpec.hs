@@ -2,40 +2,45 @@
 
 module PingSpec (spec) where
 
-import Test.Hspec
-import           Control.Monad
-import           Text.Printf
-
-import Protocol.Types
-import Protocol.Transformers
-import Protocol.Parser 
-import Text.Megaparsec 
+import Control.Monad (forM_)
 import Data.Text (Text)
 import Data.Text.Encoding (encodeUtf8)
-
+import Protocol.Parser (parseMessage)
+import Protocol.Transformers (Transformer (transform))
+import Protocol.Types (ProtocolMessage (PingMessage))
+import Test.Hspec
+  ( Spec,
+    SpecWith,
+    describe,
+    it,
+    parallel,
+    shouldBe,
+  )
+import Text.Megaparsec (parse)
+import Text.Printf (printf)
 
 spec :: Spec
 spec = do
-  parserCases
-  transformerCases  
+  doParserCases
+  doTransformerCases
 
-explicitParserCases :: [(Text, ProtocolMessage)]
-explicitParserCases = [("PING\r\n", PingMessage)]
+parserCases :: [(Text, ProtocolMessage)]
+parserCases = [("PING\r\n", PingMessage)]
 
-explicitTransformerCases :: [(ProtocolMessage, Text)]
-explicitTransformerCases = map (\(a,b) -> (b,a)) explicitParserCases
+transformerCases :: [(ProtocolMessage, Text)]
+transformerCases = map (\(a, b) -> (b, a)) parserCases
 
-parserCases :: SpecWith ()
-parserCases = parallel $ do
-  describe "generic parser" $ do
-    forM_ explicitParserCases $ \(input, want) -> do
+doParserCases :: SpecWith ()
+doParserCases = parallel $ do
+  describe "PING parser" $ do
+    forM_ parserCases $ \(input, want) -> do
       it (printf "correctly parses explicit case %s" (show input)) $ do
         let output = parse parseMessage "" input
         output `shouldBe` Right want
 
-transformerCases :: SpecWith ()
-transformerCases = parallel $ do
+doTransformerCases :: SpecWith ()
+doTransformerCases = parallel $ do
   describe "PING transformer" $ do
-    forM_ explicitTransformerCases $ \(input, want) -> do
-      it (printf"correctly transforms %s" (show input)) $ do
+    forM_ transformerCases $ \(input, want) -> do
+      it (printf "correctly transforms %s" (show input)) $ do
         transform input `shouldBe` encodeUtf8 want
