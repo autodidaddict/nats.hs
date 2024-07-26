@@ -100,9 +100,11 @@ test-suite unit-test
         nats-hs-internal,
         hspec,
         stm,
+        bytestring,
+        megaparsec,
         text
 
     build-tool-depends: hspec-discover:hspec-discover
 
-    other-modules:
-        ParserSpec
+    other-modules:        
+        PingSpec
