@@ -1,17 +1,17 @@
-module Network.NatsClient.Protocol.Types where
+module Protocol.Types where
 
 import Data.Text (Text)
-import Network.NatsClient.Protocol.Info (ServerInfo(..))
-import Network.NatsClient.Protocol.Connect (ConnectSettings(..))
+import Protocol.Info (ServerInfo(..))
+import Protocol.Connection (ConnectSettings(..))
 
 data ProtocolMessage
   = InfoMessage
       { info :: Maybe ServerInfo,
-        error :: Maybe String
+        errorMessage :: Maybe String
       }
   | ConnectMessage
       { settings :: Maybe ConnectSettings,
-        error :: Maybe String
+        errorMessage :: Maybe String
       }
   | MsgMessage
       { subject :: String,

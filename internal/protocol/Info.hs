@@ -1,6 +1,6 @@
 {-# LANGUAGE DeriveGeneric #-}
 
-module Network.NatsClient.Protocol.Info where
+module Protocol.Info (ServerInfo(..)) where
 
 import GHC.Generics
 import Data.Aeson

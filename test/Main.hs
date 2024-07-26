@@ -1,4 +1,12 @@
 module Main (main) where
 
+import Test.HUnit
+
+tests = TestList [
+    TestLabel "test2" parsePing
+    ]
+
 main :: IO ()
-main = putStrLn "Test suite not yet implemented."
+main = runTestTTAndExit tests
+
+parsePing = TestCase $ assertBool "faily" False

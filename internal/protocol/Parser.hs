@@ -1,7 +1,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RecordWildCards #-}
 
-module Network.NatsClient.Protocol.Parser where
+module Protocol.Parser where
 
 import Control.Applicative (optional)
 import Control.Monad (guard)
@@ -9,7 +9,7 @@ import Data.Aeson (eitherDecode)
 import Data.ByteString.Conversion
 import Data.Text (Text)
 import Data.Void
-import Network.NatsClient.Protocol.Types (Header (..), ProtocolMessage (..))
+import Protocol.Types (Header (..), ProtocolMessage (..))
 import Text.Megaparsec
   ( MonadParsec (takeP, try),
     Parsec,
@@ -55,16 +55,16 @@ pConnectMessage = do
   _ <- string "CONNECT" <* hspace1
   rest <- many printChar <* crlf
   case eitherDecode $ toByteString rest of
-    Right a -> return ConnectMessage {settings = Just a, error = Nothing}
-    Left e -> return ConnectMessage {settings = Nothing, error = Just e}
+    Right a -> return ConnectMessage {settings = Just a, errorMessage = Nothing}
+    Left e -> return ConnectMessage {settings = Nothing, errorMessage = Just e}
 
 pInfoMessage :: Parser ProtocolMessage
 pInfoMessage = do
   _ <- string "INFO" <* hspace1
   rest <- many printChar <* crlf
   case eitherDecode $ toByteString rest of
-    Right a -> return InfoMessage {info = Just a, error = Nothing}
-    Left e -> return InfoMessage {info = Nothing, error = Just e}
+    Right a -> return InfoMessage {info = Just a, errorMessage = Nothing}
+    Left e -> return InfoMessage {info = Nothing, errorMessage = Just e}
 
 pPingMessage :: Parser ProtocolMessage
 pPingMessage = do
@@ -152,6 +152,7 @@ pHeaderMsgMessage = do
 
 pHeaders :: Parser [Header]
 pHeaders = do
+  _ <- string "NATS/1.0" <* crlf
   many pHeader <* crlf
 
 pHeader :: Parser Header

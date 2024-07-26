@@ -1,10 +1,10 @@
 {-# LANGUAGE DeriveGeneric #-}
 
-module Network.NatsClient.Protocol.Connect where
+module Protocol.Connection (ConnectSettings (..)) where
 
-import GHC.Generics
 import Data.Aeson
 import Data.Text (Text)
+import GHC.Generics
 
 
 data ConnectSettings = ConnectSettings
@@ -28,4 +28,5 @@ data ConnectSettings = ConnectSettings
   deriving (Eq, Show, Generic)
 
 instance FromJSON ConnectSettings
+
 instance ToJSON ConnectSettings
